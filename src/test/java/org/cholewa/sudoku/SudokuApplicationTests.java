@@ -1,9 +1,12 @@
 package org.cholewa.sudoku;
 
+import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.board.SudokuField;
 import org.cholewa.sudoku.board.SudokuRow;
+import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
+import org.cholewa.sudoku.reader.SudokuReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -136,5 +139,45 @@ public class SudokuApplicationTests {
         SudokuPrinter.printBoard(sudokuBoard);
 
         //Then
+    }
+
+    @Test
+    public void testFillingOfBoard() {
+	    //Given
+        ApplicationContext context = new AnnotationConfigApplicationContext("org.cholewa");
+        SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
+        SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
+
+        //When
+        try {
+            sudokuFiller.setFieldDigit(sudokuBoard, 2, 2, 5);
+        } catch (WrongNumberArgsException e) {
+            e.printStackTrace();
+        }
+
+        int resultDigit = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getDigit();
+        int resultSize = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getAllowedDigits().size();
+        boolean hasDigit = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getAllowedDigits().contains(5);
+
+        //Then
+        SudokuPrinter.printBoard(sudokuBoard);
+        Assert.assertEquals(5, resultDigit);
+        Assert.assertEquals(8, resultSize);
+        Assert.assertFalse(hasDigit);
+    }
+
+    @Test
+    public void testCheckDataEntry() {
+	    //Given
+        ApplicationContext context = new AnnotationConfigApplicationContext("org.cholewa");
+        SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
+        SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
+        SudokuReader sudokuReader = new SudokuReader();
+
+        //When
+        sudokuReader.getSingleData(sudokuBoard, sudokuFiller);
+
+        //Then
+        SudokuPrinter.printBoard(sudokuBoard);
     }
 }
