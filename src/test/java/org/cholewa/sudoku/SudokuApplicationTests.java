@@ -15,6 +15,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Scanner;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SudokuApplicationTests {
@@ -162,7 +167,7 @@ public class SudokuApplicationTests {
         //Then
         SudokuPrinter.printBoard(sudokuBoard);
         Assert.assertEquals(5, resultDigit);
-        Assert.assertEquals(8, resultSize);
+        Assert.assertEquals(0, resultSize);
         Assert.assertFalse(hasDigit);
     }
 
@@ -173,8 +178,10 @@ public class SudokuApplicationTests {
         SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
         SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
         SudokuReader sudokuReader = new SudokuReader();
+        final Scanner scannerMock = mock(Scanner.class);
 
         //When
+        when(scannerMock.nextLine()).thenReturn("5,9,3");
         sudokuReader.getSingleData(sudokuBoard, sudokuFiller);
 
         //Then

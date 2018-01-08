@@ -21,7 +21,7 @@ public class SudokuFiller {
         }
 
         sudokuBoard.getSudokuRows().get(axisX).getSudokuFields().get(axisY).setDigit(value);
-        sudokuBoard.getSudokuRows().get(axisX).getSudokuFields().get(axisY).getAllowedDigits().remove(value);
+        sudokuBoard.getSudokuRows().get(axisX).getSudokuFields().get(axisY).getAllowedDigits().clear();
         return true;
     }
 }
