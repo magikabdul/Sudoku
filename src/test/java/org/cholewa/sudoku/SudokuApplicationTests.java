@@ -1,9 +1,9 @@
 package org.cholewa.sudoku;
 
-import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.board.SudokuField;
 import org.cholewa.sudoku.board.SudokuRow;
+import org.cholewa.sudoku.filler.SudokuDataDto;
 import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
 import org.cholewa.sudoku.reader.SudokuReader;
@@ -14,11 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Scanner;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -154,21 +149,17 @@ public class SudokuApplicationTests {
         SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
 
         //When
-        try {
-            sudokuFiller.setFieldDigit(sudokuBoard, 2, 2, 5);
-        } catch (WrongNumberArgsException e) {
-            e.printStackTrace();
-        }
+        sudokuFiller.setFieldDigit(sudokuBoard, new SudokuDataDto(9,2,5));
 
-        int resultDigit = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getDigit();
-        int resultSize = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getAllowedDigits().size();
-        boolean hasDigit = sudokuBoard.getSudokuRows().get(2).getSudokuFields().get(2).getAllowedDigits().contains(5);
+        //sudokuFiller.setFieldDigit(sudokuBoard, 2, 2, 5);
+
+        int resultDigit = sudokuBoard.getSudokuRows().get(1).getSudokuFields().get(8).getDigit();
+        int resultSize = sudokuBoard.getSudokuRows().get(1).getSudokuFields().get(8).getAllowedDigits().size();
 
         //Then
         SudokuPrinter.printBoard(sudokuBoard);
         Assert.assertEquals(5, resultDigit);
         Assert.assertEquals(0, resultSize);
-        Assert.assertFalse(hasDigit);
     }
 
     @Test
@@ -178,11 +169,11 @@ public class SudokuApplicationTests {
         SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
         SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
         SudokuReader sudokuReader = new SudokuReader();
-        final Scanner scannerMock = mock(Scanner.class);
+        //final Scanner scannerMock = mock(Scanner.class);
 
         //When
-        when(scannerMock.nextLine()).thenReturn("5,9,3");
-        sudokuReader.getSingleData(sudokuBoard, sudokuFiller);
+        //when(scannerMock.nextLine()).thenReturn("5,9,3");
+        sudokuFiller.setFieldDigit(sudokuBoard, sudokuReader.getSingleDataFromConsole());
 
         //Then
         SudokuPrinter.printBoard(sudokuBoard);

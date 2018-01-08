@@ -14,9 +14,11 @@ public class SudokuPrinter {
             for (int columnNo = 0; columnNo < 9; columnNo++) {
                 int digitInField = sudokuBoard.getSudokuRows().get(rowNo).getSudokuFields().get(columnNo).getDigit();
                 if (digitInField == 0) {
-                    sb.append(" " + " | ");
+                    sb.append(" ")
+                            .append(" | ");
                 } else {
-                    sb.append(digitInField + " | ");
+                    sb.append(digitInField)
+                            .append(" | ");
                 }
             }
             System.out.println(sb);
