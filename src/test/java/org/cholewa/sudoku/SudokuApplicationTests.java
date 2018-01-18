@@ -15,6 +15,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SudokuApplicationTests {
@@ -168,14 +171,18 @@ public class SudokuApplicationTests {
         ApplicationContext context = new AnnotationConfigApplicationContext("org.cholewa");
         SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
         SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
-        SudokuReader sudokuReader = new SudokuReader();
-        //final Scanner scannerMock = mock(Scanner.class);
+        SudokuReader sudokuReaderMock = mock(SudokuReader.class);
 
         //When
-        //when(scannerMock.nextLine()).thenReturn("5,9,3");
-        sudokuFiller.setFieldDigit(sudokuBoard, sudokuReader.getSingleDataFromConsole());
+        when(sudokuReaderMock.getSingleDataFromConsole()).thenReturn(new SudokuDataDto(3,9,5));
+        sudokuFiller.setFieldDigit(sudokuBoard, sudokuReaderMock.getSingleDataFromConsole());
+
+        int resultValue = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getDigit();
+        int resultSize = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getAllowedDigits().size();
 
         //Then
         SudokuPrinter.printBoard(sudokuBoard);
+        Assert.assertEquals(5, resultValue);
+        Assert.assertEquals(0,resultSize);
     }
 }

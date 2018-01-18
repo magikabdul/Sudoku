@@ -21,7 +21,7 @@ public class SudokuEntryValidator {
     }
 
     private static boolean checkConsoleDataLength(String data) {
-        return data.length() == 5 && (data.substring(1, 2).equals(",") && data.substring(4, 5).equals(","));
+        return data.length() == 5 && (data.substring(1, 2).equals(",") && data.substring(3, 4).equals(","));
     }
 
     private static boolean checkDataForAxisX(String data) {
