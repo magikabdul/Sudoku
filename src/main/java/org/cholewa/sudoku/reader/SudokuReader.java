@@ -3,28 +3,22 @@ package org.cholewa.sudoku.reader;
 import org.cholewa.sudoku.filler.SudokuDataDto;
 import org.springframework.stereotype.Component;
 
-import java.util.Scanner;
-
 @Component
 public class SudokuReader {
-    private Scanner scanner = new Scanner(System.in);
 
-    public SudokuDataDto getSingleDataFromConsole() {
+    public SudokuDataDto getSingleDataFromConsole(String myEntry) {
         boolean end = false;
         int axisX = 0;
         int axisY = 0;
         int value = 0;
 
-        System.out.println("Enter sudoku single field data!!!\n> ");
-
-        while (!end) {
-            String myEntry = scanner.nextLine().trim();
+        //while (!end) {
             if (SudokuEntryValidator.validateSingleDataEntry(myEntry)) {
                 axisX = parseValueForAxisX(myEntry);
                 axisY = parseValueForAxisY(myEntry);
                 value = parseValueForValue(myEntry);
                 end = true;
-            }
+            //}
         }
 
         return new SudokuDataDto(axisX, axisY, value);
