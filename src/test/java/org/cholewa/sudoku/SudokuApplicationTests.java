@@ -6,20 +6,18 @@ import org.cholewa.sudoku.board.SudokuRow;
 import org.cholewa.sudoku.filler.SudokuDataDto;
 import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
-import org.cholewa.sudoku.reader.SudokuReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("test")
 public class SudokuApplicationTests {
 
 	@Test
@@ -165,24 +163,24 @@ public class SudokuApplicationTests {
         Assert.assertEquals(0, resultSize);
     }
 
-    @Test
-    public void testCheckDataEntry() {
-	    //Given
-        ApplicationContext context = new AnnotationConfigApplicationContext("org.cholewa");
-        SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
-        SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
-        SudokuReader sudokuReaderMock = mock(SudokuReader.class);
-
-        //When
-        when(sudokuReaderMock.getSingleDataFromConsole()).thenReturn(new SudokuDataDto(3,9,5));
-        sudokuFiller.setFieldDigit(sudokuBoard, sudokuReaderMock.getSingleDataFromConsole());
-
-        int resultValue = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getDigit();
-        int resultSize = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getAllowedDigits().size();
-
-        //Then
-        SudokuPrinter.printBoard(sudokuBoard);
-        Assert.assertEquals(5, resultValue);
-        Assert.assertEquals(0,resultSize);
-    }
+//    @Test
+//    public void testCheckDataEntry() {
+//	    //Given
+//        ApplicationContext context = new AnnotationConfigApplicationContext("org.cholewa");
+//        SudokuBoard sudokuBoard = context.getBean(SudokuBoard.class);
+//        SudokuFiller sudokuFiller = context.getBean(SudokuFiller.class);
+//        SudokuReader sudokuReaderMock = mock(SudokuReader.class);
+//
+//        //When
+//        when(sudokuReaderMock.getSingleDataFromConsole()).thenReturn(new SudokuDataDto(3,9,5));
+//        sudokuFiller.setFieldDigit(sudokuBoard, sudokuReaderMock.getSingleDataFromConsole());
+//
+//        int resultValue = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getDigit();
+//        int resultSize = sudokuBoard.getSudokuRows().get(8).getSudokuFields().get(2).getAllowedDigits().size();
+//
+//        //Then
+//        SudokuPrinter.printBoard(sudokuBoard);
+//        Assert.assertEquals(5, resultValue);
+//        Assert.assertEquals(0,resultSize);
+//    }
 }
