@@ -21,6 +21,17 @@ public class SudokuField {
     public boolean setDigit(int digit) {
         if (digit >= 0 && digit <= 9) {
             this.digit = digit;
+            allowedDigits.clear();
+            allowedDigits.add(digit);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeAllowedDigit(int digit) {
+        if (allowedDigits.contains(digit)) {
+            allowedDigits.remove(digit);
             return true;
         } else {
             return false;

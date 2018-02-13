@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.entry.DataEntryValidator;
 import org.cholewa.sudoku.entry.KeyboardHandler;
+import org.cholewa.sudoku.entry.SampleBoard;
 import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
+import org.cholewa.sudoku.processor.SudokuAdvancedProcessor;
+import org.cholewa.sudoku.processor.SudokuProcessor;
 import org.cholewa.sudoku.reader.SudokuReader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -19,27 +22,86 @@ public class SudokuEngine implements CommandLineRunner {
     private SudokuReader reader;
     private SudokuFiller filler;
     private KeyboardHandler keyboardHandler;
-
-//    public SudokuEngine(SudokuBoard board, SudokuReader reader, ) {
-//        this.board = board;
-//    }
+    private SudokuProcessor processor;
 
     @Override
-    public void run(String... args) throws Exception {
-        boolean doFindSolution = false;
-        SudokuPrinter.printBoard(board);
+    public void run(String... args) {
+        boolean areStartingDataComplete = false;
+
+        loadStartingData();
+
         System.out.println("Enter sudoku single field data!!!\n> ");
 
-        while (!doFindSolution) {
-            String myEntry = keyboardHandler.readKeyboardEntry().trim();
-
-            doFindSolution = DataEntryValidator.isReadyToFindSolution(myEntry);
-
-            if (!doFindSolution) {
-                filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
-                SudokuPrinter.printBoard(board);
-                System.out.println("Enter sudoku single field data!!!\n> ");
-            }
+        while (!areStartingDataComplete) {
+            areStartingDataComplete = processCollectingStartingData();
         }
+
+        boolean isBoardSolved = false;
+        int iteration = 0;
+        int numberOfSolvedFields = processor.getSudokuSolvedFields(board);
+
+        while (!isBoardSolved) {
+            iteration++;
+            System.out.println("\nIteration number: " + iteration);
+
+            processor.updateAvailableDigitsForFields(board);
+
+            if (numberOfSolvedFields == processor.getSudokuSolvedFields(board)) {
+                System.out.println("Looking for more complex solution");
+
+                SudokuAdvancedProcessor advancedProcessor = new SudokuAdvancedProcessor();
+
+                if (advancedProcessor.hasSolution(board, processor)) {
+                    board.getSudokuRows().get(advancedProcessor.getAxisY()).getSudokuFields().get(advancedProcessor.getAxisX()).setDigit(advancedProcessor.getValue());
+                    iteration = iteration + advancedProcessor.getIterations();
+                } else {
+                    System.out.println("Can't find board solution :(\n\n");
+                    System.exit(0);
+                }
+            }
+
+            SudokuPrinter.printBoard(board);
+
+            numberOfSolvedFields = processor.getSudokuSolvedFields(board);
+
+            System.out.println("Number of solved fields: " + numberOfSolvedFields + " of 81");
+            //Thread.sleep(3000);
+
+            isBoardSolved = processor.isSudokuSolved(board);
+        }
+
+        printFinalMessage(iteration);
+    }
+
+    private void loadStartingData() {
+        new SampleBoard(board, filler);
+        System.out.println("\n\tBoard with demo data");
+        SudokuPrinter.printBoard(board);
+    }
+
+    private boolean processCollectingStartingData() {
+        boolean areStartingDataComplete;
+
+        String myEntry = keyboardHandler.readKeyboardEntry().trim();
+
+        areStartingDataComplete = DataEntryValidator.isReadyToFindSolution(myEntry);
+
+        if (!areStartingDataComplete) {
+            filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
+            SudokuPrinter.printBoard(board);
+            System.out.println("Enter sudoku single field data!!!\n> ");
+        }
+
+        return areStartingDataComplete;
+    }
+
+    private void printFinalMessage(int iteration) {
+        System.out.println("\n\n*************************************");
+        System.out.println("*************************************");
+        System.out.println("*************************************\n");
+
+        System.out.println("Board solved in " + iteration + " iterations");
+        System.out.println("Final solution below\n");
+        SudokuPrinter.printBoard(board);
     }
 }
