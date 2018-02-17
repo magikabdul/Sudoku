@@ -7,8 +7,6 @@ import java.util.Set;
 
 @Getter
 public class SudokuAdvancedProcessor {
-    private static final int MAX_ITERATIONS = 10000;
-
     private int iterations;
     private int axisX;
     private int axisY;
@@ -16,14 +14,14 @@ public class SudokuAdvancedProcessor {
 
     public boolean hasSolution(SudokuBoard board, SudokuProcessor processor) {
         SudokuBoard altBoard;
-        int numberOfSolvedFields = 0;
+        int numberOfSolvedFields;
 
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
+            for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
                 altBoard = makeCopy(board);
 
                 if (!processor.isFieldSolved(altBoard, x, y)) {
-                    Set<Integer> set = altBoard.getSudokuRows().get(y).getSudokuFields().get(x).getAllowedDigits();
+                    Set<Integer> set = altBoard.getSudokuField(x, y).getAllowedDigits();
                     for (int availableValue : set) {
                         altBoard = makeCopy(board);
                         numberOfSolvedFields = 0;
@@ -33,10 +31,9 @@ public class SudokuAdvancedProcessor {
                         value = availableValue;
                         iterations++;
 
-                        System.out.println("Putting alt values to x = " + axisX + ", y = " + axisY + ", value =" + value);
-                        //Thread.sleep(50000);
+                        //System.out.println("Putting alt values to x = " + axisX + ", y = " + axisY + ", value =" + value);
 
-                        altBoard.getSudokuRows().get(y).getSudokuFields().get(x).setDigit(value);
+                        altBoard.getSudokuField(x, y).setDigit(value);
                         processor.updateAvailableDigitsForFields(altBoard);
 
                         boolean isBoardSolved = false;
@@ -65,17 +62,17 @@ public class SudokuAdvancedProcessor {
     private SudokuBoard makeCopy(SudokuBoard sudokuBoard) {
         SudokuBoard boardCopy = new SudokuBoard();
 
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
-                Set<Integer> set = sudokuBoard.getSudokuRows().get(y).getSudokuFields().get(x).getAllowedDigits();
-                int size = set.size();
+        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
+            for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
+                Set<Integer> set = sudokuBoard.getSudokuField(x, y).getAllowedDigits();
 
-                if (size == 1) {
-                    boardCopy.getSudokuRows().get(y).getSudokuFields().get(x).setDigit(sudokuBoard.getSudokuRows().get(y).getSudokuFields().get(x).getDigit());
+                if (set.size() == 1) {
+                    boardCopy.getSudokuField(x, y).setDigit(
+                            sudokuBoard.getSudokuField(x, y).getDigit());
                 } else {
                     for (int digit = 1; digit < 10; digit++) {
                         if (!set.contains(digit)) {
-                            boardCopy.getSudokuRows().get(y).getSudokuFields().get(x).removeAllowedDigit(digit);
+                            boardCopy.getSudokuField(x,y).removeAllowedDigit(digit);
                         }
                     }
                 }

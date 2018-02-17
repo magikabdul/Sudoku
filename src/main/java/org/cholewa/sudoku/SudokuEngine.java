@@ -5,6 +5,7 @@ import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.entry.DataEntryValidator;
 import org.cholewa.sudoku.entry.KeyboardHandler;
 import org.cholewa.sudoku.entry.SampleBoard;
+import org.cholewa.sudoku.filler.SudokuDataDto;
 import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
 import org.cholewa.sudoku.processor.SudokuAdvancedProcessor;
@@ -52,7 +53,7 @@ public class SudokuEngine implements CommandLineRunner {
                 SudokuAdvancedProcessor advancedProcessor = new SudokuAdvancedProcessor();
 
                 if (advancedProcessor.hasSolution(board, processor)) {
-                    board.getSudokuRows().get(advancedProcessor.getAxisY()).getSudokuFields().get(advancedProcessor.getAxisX()).setDigit(advancedProcessor.getValue());
+                    board.getSudokuField(advancedProcessor.getAxisX(), advancedProcessor.getAxisY()).setDigit(advancedProcessor.getValue());
                     iteration = iteration + advancedProcessor.getIterations();
                 } else {
                     System.out.println("Can't find board solution :(\n\n");
@@ -82,13 +83,16 @@ public class SudokuEngine implements CommandLineRunner {
     private boolean processCollectingStartingData() {
         boolean areStartingDataComplete;
 
-        String myEntry = keyboardHandler.readKeyboardEntry().trim();
+        String myEntry = keyboardHandler.readKeyboardEntry();
 
         areStartingDataComplete = DataEntryValidator.isReadyToFindSolution(myEntry);
 
         if (!areStartingDataComplete) {
-            filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
-            SudokuPrinter.printBoard(board);
+            if (!reader.getSingleDataFromConsole(myEntry).equals(new SudokuDataDto(0, 0, 0))) {
+                filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
+                SudokuPrinter.printBoard(board);
+            }
+
             System.out.println("Enter sudoku single field data!!!\n> ");
         }
 

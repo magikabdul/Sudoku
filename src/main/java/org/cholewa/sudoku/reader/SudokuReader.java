@@ -7,32 +7,12 @@ import org.springframework.stereotype.Component;
 public class SudokuReader {
 
     public SudokuDataDto getSingleDataFromConsole(String myEntry) {
-        boolean end = false;
-        int axisX = 0;
-        int axisY = 0;
-        int value = 0;
 
-        //while (!end) {
-            if (SudokuEntryValidator.validateSingleDataEntry(myEntry)) {
-                axisX = parseValueForAxisX(myEntry);
-                axisY = parseValueForAxisY(myEntry);
-                value = parseValueForValue(myEntry);
-                end = true;
-            //}
+        if (SudokuEntryValidator.validateSingleDataEntry(myEntry)) {
+            String[] values = myEntry.split(",");
+            return new SudokuDataDto(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
         }
 
-        return new SudokuDataDto(axisX, axisY, value);
-    }
-
-    private int parseValueForAxisX(String data) {
-        return Integer.parseInt(data.substring(0, data.indexOf(",")));
-    }
-
-    private int parseValueForAxisY(String data) {
-        return Integer.parseInt(data.substring(data.indexOf(",") + 1, data.lastIndexOf(",")));
-    }
-
-    private int parseValueForValue(String data) {
-        return Integer.parseInt(data.substring(data.lastIndexOf(",") + 1));
+        return new SudokuDataDto(0,0,0);
     }
 }

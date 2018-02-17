@@ -10,11 +10,17 @@ import java.util.List;
 //@Scope("singleton")
 @Getter
 public class SudokuBoard {
+    public final static int SUDOKU_AXIS_LENGTH = 9;
+
     private List<SudokuRow> sudokuRows = new ArrayList<>();
 
     public SudokuBoard() {
         for (int i = 0; i < 9; i++) {
             sudokuRows.add(new SudokuRow());
         }
+    }
+
+    public SudokuField getSudokuField(int axisX, int axisY) {
+        return sudokuRows.get(axisY).getSudokuFields().get(axisX);
     }
 }

@@ -13,4 +13,16 @@ public class SudokuDataDto {
         this.axisY = axisY;
         this.value = value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SudokuDataDto that = (SudokuDataDto) o;
+
+        if (axisX != that.axisX) return false;
+        if (axisY != that.axisY) return false;
+        return value == that.value;
+    }
 }
