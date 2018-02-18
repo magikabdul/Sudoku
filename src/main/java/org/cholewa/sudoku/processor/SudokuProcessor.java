@@ -14,25 +14,28 @@ public class SudokuProcessor {
         checkLocalSquare(board, axisX, axisY);
     }
 
-    public boolean isFieldSolved(SudokuBoard board, int axisX, int axisY) {
-        return board.getSudokuField(axisX, axisY).getAllowedDigits().size() == 1;
+    public boolean isNotFieldSolved(SudokuBoard board, int axisX, int axisY) {
+        return board.getSudokuField(axisX, axisY).getAllowedDigits().size() != 1;
     }
 
     public boolean isSudokuSolved(SudokuBoard board) {
-        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
-            for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
-                if (board.getSudokuField(x, y).getAllowedDigits().size() > 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return board.getSudokuFieldStream()
+                .map(sudokuField -> sudokuField.getAllowedDigits().size())
+                .allMatch(integer -> integer <= 1);
+//        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
+//            for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
+//                if (board.getSudokuField(x, y).getAllowedDigits().size() > 1) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
     }
 
     public void updateAvailableDigitsForFields(SudokuBoard board) {
         for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
             for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
-                if (!isFieldSolved(board, x, y)) {
+                if (isNotFieldSolved(board, x, y)) {
                     removeWrongDigits(board, x, y);
                     checkAllowedDigitSize(board, x, y);
                 }
@@ -52,10 +55,9 @@ public class SudokuProcessor {
     }
 
     public int getSudokuSolvedFields(SudokuBoard board) {
-        return (int)board.getSudokuRows().stream()
-                .flatMap(sudokuRow -> sudokuRow.getSudokuFields().stream())
+        return (int) board.getSudokuFieldStream()
                 .map(SudokuField::getDigit)
-                .filter(integer -> integer>0)
+                .filter(integer -> integer > 0)
                 .count();
     }
 

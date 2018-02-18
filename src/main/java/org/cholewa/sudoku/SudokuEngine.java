@@ -5,7 +5,6 @@ import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.entry.DataEntryValidator;
 import org.cholewa.sudoku.entry.KeyboardHandler;
 import org.cholewa.sudoku.entry.SampleBoard;
-import org.cholewa.sudoku.filler.SudokuDataDto;
 import org.cholewa.sudoku.filler.SudokuFiller;
 import org.cholewa.sudoku.printer.SudokuPrinter;
 import org.cholewa.sudoku.processor.SudokuAdvancedProcessor;
@@ -14,6 +13,8 @@ import org.cholewa.sudoku.reader.SudokuReader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -72,10 +73,11 @@ public class SudokuEngine implements CommandLineRunner {
         }
 
         printFinalMessage(iteration);
+        SudokuPrinter.printBoard(board);
     }
 
     private void loadStartingData() {
-        new SampleBoard(board, filler);
+        new SampleBoard(board);
         System.out.println("\n\tBoard with demo data");
         SudokuPrinter.printBoard(board);
     }
@@ -88,10 +90,16 @@ public class SudokuEngine implements CommandLineRunner {
         areStartingDataComplete = DataEntryValidator.isReadyToFindSolution(myEntry);
 
         if (!areStartingDataComplete) {
-            if (!reader.getSingleDataFromConsole(myEntry).equals(new SudokuDataDto(0, 0, 0))) {
-                filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
-                SudokuPrinter.printBoard(board);
-            }
+            Optional.ofNullable(reader.getSingleDataFromConsole(myEntry))
+                        .ifPresent(field -> {
+                            filler.setFieldDigit(board, field);
+                            SudokuPrinter.printBoard(board);
+                        });
+
+//            if (!reader.getSingleDataFromConsole(myEntry).equals(new SudokuDataDto(0, 0, 0))) {
+//                filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
+//                SudokuPrinter.printBoard(board);
+//            }
 
             System.out.println("Enter sudoku single field data!!!\n> ");
         }
@@ -99,13 +107,12 @@ public class SudokuEngine implements CommandLineRunner {
         return areStartingDataComplete;
     }
 
-    private void printFinalMessage(int iteration) {
+    public static void printFinalMessage(int iteration) {
         System.out.println("\n\n*************************************");
         System.out.println("*************************************");
         System.out.println("*************************************\n");
 
         System.out.println("Board solved in " + iteration + " iterations");
         System.out.println("Final solution below\n");
-        SudokuPrinter.printBoard(board);
     }
 }

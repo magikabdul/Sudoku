@@ -4,23 +4,23 @@ import org.cholewa.sudoku.board.SudokuBoard;
 import org.cholewa.sudoku.processor.RangeLimiter;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.IntStream;
+
 @Component
 public class SudokuFiller {
 
     public void setFieldDigit(SudokuBoard sudokuBoard, SudokuDataDto dataDto) {
-        if (!isDigitUsedInRow(sudokuBoard, dataDto)) {
+        if (isDigitUsedInRow(sudokuBoard, dataDto)) {
             System.out.println("Digit: " + dataDto.getValue() + " is used in row " + dataDto.getAxisX());
             System.out.println("Please use different one!!\n");
-        } else if (!isDigitUsedInColumn(sudokuBoard, dataDto)) {
+        } else if (isDigitUsedInColumn(sudokuBoard, dataDto)) {
             System.out.println("Digit: " + dataDto.getValue() + " is used in column " + dataDto.getAxisY());
             System.out.println("Please use different one!!\n");
-        } else if (!isDigitUsedInLocalSquare(sudokuBoard, dataDto)) {
+        } else if (isDigitUsedInLocalSquare(sudokuBoard, dataDto)) {
             System.out.println("Digit: " + dataDto.getValue() + " is used in local square");
             System.out.println("Please use different one!!\n");
         } else {
             sudokuBoard.getSudokuField(dataDto.getAxisX() - 1, dataDto.getAxisY() - 1).setDigit(dataDto.getValue());
-
-
             sudokuBoard.getSudokuRows().get(dataDto.getAxisY() - 1).getSudokuFields().get(dataDto.getAxisX() - 1).getAllowedDigits().clear();
         }
     }
@@ -30,14 +30,18 @@ public class SudokuFiller {
         int axisY = sudokuDataDto.getAxisY() - 1;
         int value = sudokuDataDto.getValue();
 
-        for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
-            if (x != axisX) {
-                if (sudokuBoard.getSudokuField(x, axisY).getDigit() == value) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return IntStream.range(0, SudokuBoard.SUDOKU_AXIS_LENGTH)
+                .filter(x -> x != axisX)
+                .anyMatch(x -> sudokuBoard.getSudokuField(x, axisY).getDigit() == value);
+
+//        for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
+//            if (x != axisX) {
+//                if (sudokuBoard.getSudokuField(x, axisY).getDigit() == value) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
     }
 
     private boolean isDigitUsedInColumn(SudokuBoard sudokuBoard, SudokuDataDto sudokuDataDto) {
@@ -45,14 +49,18 @@ public class SudokuFiller {
         int axisY = sudokuDataDto.getAxisY() - 1;
         int value = sudokuDataDto.getValue();
 
-        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
-            if (y != axisY) {
-                if (sudokuBoard.getSudokuField(axisX, y).getDigit() == value) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return IntStream.range(0, SudokuBoard.SUDOKU_AXIS_LENGTH)
+                .filter(y -> y != axisY)
+                .anyMatch(y -> sudokuBoard.getSudokuField(axisX, y).getDigit() == value);
+
+//        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
+//            if (y != axisY) {
+//                if (sudokuBoard.getSudokuField(axisX, y).getDigit() == value) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
     }
 
     private boolean isDigitUsedInLocalSquare(SudokuBoard sudokuBoard, SudokuDataDto sudokuDataDto) {
@@ -69,11 +77,11 @@ public class SudokuFiller {
             for (int x = initX; x < limitX; x++) {
                 if (x != axisX && y != axisY) {
                     if (sudokuBoard.getSudokuField(x, y).getDigit() == value) {
-                        return false;
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 }

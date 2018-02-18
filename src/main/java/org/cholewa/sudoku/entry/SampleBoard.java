@@ -1,19 +1,18 @@
 package org.cholewa.sudoku.entry;
 
 import org.cholewa.sudoku.board.SudokuBoard;
-import org.cholewa.sudoku.filler.SudokuFiller;
+
+import java.util.Arrays;
 
 public class SampleBoard {
     private SudokuBoard board;
-    private SudokuFiller filler;
 
-    public SampleBoard(SudokuBoard board, SudokuFiller filler) {
+    public SampleBoard(SudokuBoard board) {
         this.board = board;
-        this.filler = filler;
-        fill();
+        fillNew();
     }
 
-    private void fill() {
+    private void fillOld() {
         board.getSudokuRows().get(0).getSudokuFields().get(1).setDigit(2);
         board.getSudokuRows().get(0).getSudokuFields().get(3).setDigit(5);
         board.getSudokuRows().get(0).getSudokuFields().get(5).setDigit(1);
@@ -52,5 +51,22 @@ public class SampleBoard {
         board.getSudokuRows().get(8).getSudokuFields().get(3).setDigit(9);
         board.getSudokuRows().get(8).getSudokuFields().get(5).setDigit(7);
         board.getSudokuRows().get(8).getSudokuFields().get(7).setDigit(6);
+    }
+
+    private void fillNew() {
+        int[][] data = {
+                {2, 1, 2}, {4, 1, 5}, {6, 1, 1}, {8, 1, 9},
+                {1, 2, 8}, {4, 2, 2}, {6, 2, 3}, {9, 2, 6},
+                {2, 3, 3}, {5, 3, 6}, {8, 3, 7},
+                {3, 4, 1}, {7, 4, 6},
+                {1, 5, 5}, {2, 5, 4}, {8, 5, 1}, {9, 5, 9},
+                {3, 6, 2}, {7, 6, 7},
+                {2, 7, 9}, {5, 7, 3}, {8, 7, 8},
+                {1, 8, 2}, {4, 8, 8}, {6, 8, 4}, {9, 8, 7},
+                {2, 9, 1}, {4, 9, 9}, {6, 9, 7}, {8, 9, 6}
+        };
+
+        Arrays.stream(data)
+                .forEach(field -> board.getSudokuField(field[0] - 1, field[1] -1).setDigit(field[2]));
     }
 }
