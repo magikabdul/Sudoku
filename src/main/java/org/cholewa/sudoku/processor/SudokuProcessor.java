@@ -22,14 +22,6 @@ public class SudokuProcessor {
         return board.getSudokuFieldStream()
                 .map(sudokuField -> sudokuField.getAllowedDigits().size())
                 .allMatch(integer -> integer <= 1);
-//        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
-//            for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
-//                if (board.getSudokuField(x, y).getAllowedDigits().size() > 1) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
     }
 
     public void updateAvailableDigitsForFields(SudokuBoard board) {

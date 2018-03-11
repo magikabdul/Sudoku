@@ -1,20 +1,15 @@
 package org.cholewa.sudoku.processor;
 
 import lombok.Getter;
-import org.cholewa.sudoku.SudokuEngine;
 import org.cholewa.sudoku.board.SudokuBoard;
-import org.cholewa.sudoku.printer.SudokuPrinter;
 
 import java.util.Set;
 
 @Getter
 public class SudokuAdvancedProcessor {
     private int iterations;
-    private int axisX;
-    private int axisY;
-    private int value;
 
-    public boolean hasSolution(SudokuBoard board, SudokuProcessor processor) {
+    public SudokuBoard findSolution(SudokuBoard board, SudokuProcessor processor) {
         SudokuBoard altBoard;
         int numberOfSolvedFields;
 
@@ -28,14 +23,9 @@ public class SudokuAdvancedProcessor {
                         altBoard = board.makeCopy();
                         numberOfSolvedFields = 0;
 
-                        axisX = x;
-                        axisY = y;
-                        value = availableValue;
                         iterations++;
 
-                        //System.out.println("Putting alt values to x = " + axisX + ", y = " + axisY + ", value =" + value);
-
-                        altBoard.getSudokuField(x, y).setDigit(value);
+                        altBoard.getSudokuField(x, y).setDigit(availableValue);
                         processor.updateAvailableDigitsForFields(altBoard);
 
                         boolean isBoardSolved = false;
@@ -51,16 +41,13 @@ public class SudokuAdvancedProcessor {
                             isBoardSolved = processor.isSudokuSolved(altBoard);
 
                             if (numberOfSolvedFields == 81) {
-                                SudokuEngine.printFinalMessage(iterations);
-                                SudokuPrinter.printBoard(altBoard);
-                                System.exit(0);
-                                //return true;
+                                return altBoard;
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 }

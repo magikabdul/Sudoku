@@ -28,16 +28,12 @@ public class SudokuEngine implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        boolean areStartingDataComplete = false;
-
         loadStartingData();
+        enterSudokuData();
+        solveBoard();
+    }
 
-        System.out.println("Enter sudoku single field data!!!\n> ");
-
-        while (!areStartingDataComplete) {
-            areStartingDataComplete = processCollectingStartingData();
-        }
-
+    private void solveBoard() {
         boolean isBoardSolved = false;
         int iteration = 0;
         int numberOfSolvedFields = processor.getSudokuSolvedFields(board);
@@ -49,31 +45,44 @@ public class SudokuEngine implements CommandLineRunner {
             processor.updateAvailableDigitsForFields(board);
 
             if (numberOfSolvedFields == processor.getSudokuSolvedFields(board)) {
-                System.out.println("Looking for more complex solution");
-
-                SudokuAdvancedProcessor advancedProcessor = new SudokuAdvancedProcessor();
-
-                if (advancedProcessor.hasSolution(board, processor)) {
-                    board.getSudokuField(advancedProcessor.getAxisX(), advancedProcessor.getAxisY()).setDigit(advancedProcessor.getValue());
-                    iteration = iteration + advancedProcessor.getIterations();
-                } else {
-                    System.out.println("Can't find board solution :(\n\n");
-                    System.exit(0);
-                }
+                iteration += tryAdvancedMethod();
+            } else {
+                SudokuPrinter.printBoard(board);
             }
-
-            SudokuPrinter.printBoard(board);
 
             numberOfSolvedFields = processor.getSudokuSolvedFields(board);
 
             System.out.println("Number of solved fields: " + numberOfSolvedFields + " of 81");
-            //Thread.sleep(3000);
 
             isBoardSolved = processor.isSudokuSolved(board);
         }
 
         printFinalMessage(iteration);
         SudokuPrinter.printBoard(board);
+    }
+
+    private int tryAdvancedMethod() {
+        System.out.println("Looking for more complex solution");
+
+        SudokuAdvancedProcessor advancedProcessor = new SudokuAdvancedProcessor();
+
+        board = advancedProcessor.findSolution(board, processor);
+
+        if (board == null) {
+            System.out.println("Can't find board solution :(\n\n");
+            System.exit(0);
+        }
+
+        return advancedProcessor.getIterations();
+    }
+
+    private void enterSudokuData() {
+        boolean areStartingDataComplete = false;
+        System.out.println("Enter sudoku single field data!!!\n> ");
+
+        while (!areStartingDataComplete) {
+            areStartingDataComplete = processCollectingStartingData();
+        }
     }
 
     private void loadStartingData() {
@@ -96,18 +105,13 @@ public class SudokuEngine implements CommandLineRunner {
                             SudokuPrinter.printBoard(board);
                         });
 
-//            if (!reader.getSingleDataFromConsole(myEntry).equals(new SudokuDataDto(0, 0, 0))) {
-//                filler.setFieldDigit(board, reader.getSingleDataFromConsole(myEntry));
-//                SudokuPrinter.printBoard(board);
-//            }
-
             System.out.println("Enter sudoku single field data!!!\n> ");
         }
 
         return areStartingDataComplete;
     }
 
-    public static void printFinalMessage(int iteration) {
+    private static void printFinalMessage(int iteration) {
         System.out.println("\n\n*************************************");
         System.out.println("*************************************");
         System.out.println("*************************************\n");

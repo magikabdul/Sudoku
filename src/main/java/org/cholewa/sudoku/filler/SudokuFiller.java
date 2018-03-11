@@ -33,15 +33,6 @@ public class SudokuFiller {
         return IntStream.range(0, SudokuBoard.SUDOKU_AXIS_LENGTH)
                 .filter(x -> x != axisX)
                 .anyMatch(x -> sudokuBoard.getSudokuField(x, axisY).getDigit() == value);
-
-//        for (int x = 0; x < SudokuBoard.SUDOKU_AXIS_LENGTH; x++) {
-//            if (x != axisX) {
-//                if (sudokuBoard.getSudokuField(x, axisY).getDigit() == value) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
     }
 
     private boolean isDigitUsedInColumn(SudokuBoard sudokuBoard, SudokuDataDto sudokuDataDto) {
@@ -52,15 +43,6 @@ public class SudokuFiller {
         return IntStream.range(0, SudokuBoard.SUDOKU_AXIS_LENGTH)
                 .filter(y -> y != axisY)
                 .anyMatch(y -> sudokuBoard.getSudokuField(axisX, y).getDigit() == value);
-
-//        for (int y = 0; y < SudokuBoard.SUDOKU_AXIS_LENGTH; y++) {
-//            if (y != axisY) {
-//                if (sudokuBoard.getSudokuField(axisX, y).getDigit() == value) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
     }
 
     private boolean isDigitUsedInLocalSquare(SudokuBoard sudokuBoard, SudokuDataDto sudokuDataDto) {
