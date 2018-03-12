@@ -21,7 +21,7 @@ public class SudokuFiller {
             System.out.println("Please use different one!!\n");
         } else {
             sudokuBoard.getSudokuField(dataDto.getAxisX() - 1, dataDto.getAxisY() - 1).setDigit(dataDto.getValue());
-            sudokuBoard.getSudokuRows().get(dataDto.getAxisY() - 1).getSudokuFields().get(dataDto.getAxisX() - 1).getAllowedDigits().clear();
+            //sudokuBoard.getSudokuRows().get(dataDto.getAxisY() - 1).getSudokuFields().get(dataDto.getAxisX() - 1).getAllowedDigits().stream();
         }
     }
 
